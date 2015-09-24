@@ -124,9 +124,11 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="gulpfile.js" />
     <Content Include="Scripts\Libraries\bootstrap.js" />
     <Content Include="Scripts\Libraries\bootstrap.min.js" />
     <Content Include="Scripts\Libraries\jquery.js" />
+    <Content Include="package.json" />
     <None Include="Scripts\Libraries\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\Libraries\jquery.validate.js" />
     <Content Include="Scripts\Libraries\jquery.validate.min.js" />
@@ -176,7 +178,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>56830</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
@@ -191,10 +193,24 @@
       <UserProperties package_1json__JSONSchema="http://json.schemastore.org/resjson" />
     </VisualStudio>
   </ProjectExtensions>
+  <PropertyGroup>
+    <PreBuildEvent>if $(ConfigurationName) == Release (
+      cd $(ProjectDir)
+      npm install
+      gulp minifyFilesForRelease
+
+      )
+</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
   </Target> -->
+  <Target Name="AfterBuild">
+    <ItemGroup>
+      <Content Include="dist\*.*" />
+    </ItemGroup>
+  </Target>
 </Project>

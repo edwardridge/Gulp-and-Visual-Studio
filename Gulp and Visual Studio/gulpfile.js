@@ -12,6 +12,41 @@ gulp.task('sass', function () {
     ;
 });
 
+gulp.task('minifyFilesForRelease', function () {
+
+    var cssFilter = plugins.filter('**/*.css', { restore: true });
+    var jsFilter = plugins.filter('**/*.js', { restore: true });
+
+    var assets = plugins.useref.assets();
+    gulp.src('./**/*.cshtml')
+        .pipe(assets)
+
+        //Process JavaScript
+        .pipe(jsFilter)
+        .pipe(plugins.uglify())
+        .pipe(plugins.rev())
+        .pipe(assets.restore())
+        .pipe(jsFilter.restore)
+        
+        //Process CSS
+        .pipe(cssFilter)
+        .pipe(plugins.minifyCss({
+            keepSpecialComments: 0
+        }))
+        .pipe(plugins.rev())
+        .pipe(assets.restore())
+        .pipe(cssFilter.restore)
+
+        .pipe(plugins.useref())
+        .pipe(plugins.revReplace({
+            replaceInExtensions: ['.js', '.css', '.html', '.cshtml']
+        }))
+        .pipe(gulp.dest(function (data) {
+            return data.base;
+        }
+        ));
+});
+
 gulp.task('watch-sass', function () {
     plugins.livereload.listen();
     gulp.watch('./Content/*.scss', ['sass']);
